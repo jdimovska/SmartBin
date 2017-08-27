@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_scan"
+            android:icon="@drawable/ic_center_focus_strong_black_24dp"
+            android:title="Scan" />
+        <item
+            android:id="@+id/nav_map"
+            android:icon="@drawable/ic_pin_drop_black_24dp"
+            android:title="Map" />
+        <item
+            android:id="@+id/nav_firms"
+            android:icon="@drawable/ic_contact_phone_black_24dp"
+            android:title="Firms" />
+    </group>
+
+    <item android:title="User Settings">
+        <menu>
+            <item
+                android:id="@+id/nav_user"
+                android:icon="@drawable/ic_person_black_24dp"
+                android:title="Update Profile" />
+            <item
+                android:id="@+id/nav_log_out"
+                android:icon="@drawable/ic_exit_to_app_black_24dp"
+                android:title="Log out" />
+        </menu>
+    </item>
+
+</menu>
