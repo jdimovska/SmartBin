@@ -24,8 +24,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-
-
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
     private Button btnLogin;
@@ -35,45 +33,43 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressDialog pDialog;
     private SessionManager session;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        inputEmail = (EditText) findViewById(R.id.email);
-        inputPassword = (EditText) findViewById(R.id.password);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-        btnLinkToRegister = (Button) findViewById(R.id.btnLinkToRegisterScreen);
-
-
+        setupView();
+        checkSession();
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
+        setupButtonsListeners();
+    }
 
-
+    private void checkSession() {
         session = new SessionManager(getApplicationContext());
-
-
         if (session.isLoggedIn()) {
-
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }
+    }
 
+    private void setupView() {
+        inputEmail = (EditText) findViewById(R.id.email);
+        inputPassword = (EditText) findViewById(R.id.password);
+        btnLogin = (Button) findViewById(R.id.btnLogin);
+        btnLinkToRegister = (Button) findViewById(R.id.btnLinkToRegisterScreen);
+    }
 
+    private void setupButtonsListeners() {
         btnLogin.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
 
-
                 if (!email.isEmpty() && !password.isEmpty()) {
-
                     checkLogin(email, password);
                 } else {
-
                     Toast.makeText(getApplicationContext(),
                             "Please enter the credentials!", Toast.LENGTH_LONG)
                             .show();
@@ -81,7 +77,6 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         });
-
 
         btnLinkToRegister.setOnClickListener(new View.OnClickListener() {
 
@@ -92,14 +87,11 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
-
     }
-
 
     private void checkLogin(final String email, final String password) {
 
         String tag_string_req = "req_login";
-
         pDialog.setMessage("Logging in ...");
         showDialog();
 
@@ -126,9 +118,9 @@ public class LoginActivity extends AppCompatActivity {
                         String email = user.getString("email");
                         String created_at = user
                                 .getString("created_at");
-
-
-
+                        session.setEmail(email);
+                        session.setFullName(name);
+                        //session.setUsername(username);
                         Intent intent = new Intent(LoginActivity.this,
                                 MainActivity.class);
                         startActivity(intent);
@@ -159,7 +151,6 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             protected Map<String, String> getParams() {
-
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("email", email);
                 params.put("password", password);
@@ -168,8 +159,6 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         };
-
-
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
@@ -177,7 +166,6 @@ public class LoginActivity extends AppCompatActivity {
         if (!pDialog.isShowing())
             pDialog.show();
     }
-
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();

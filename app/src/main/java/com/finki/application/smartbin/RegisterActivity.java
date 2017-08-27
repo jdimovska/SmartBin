@@ -32,40 +32,31 @@ public class RegisterActivity extends Activity {
     private EditText inputFullName;
     private EditText inputEmail;
     private EditText inputPassword;
+    private EditText inputUsername;
     private ProgressDialog pDialog;
     private SessionManager session;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        inputFullName = (EditText) findViewById(R.id.name);
-        inputEmail = (EditText) findViewById(R.id.email);
-        inputPassword = (EditText) findViewById(R.id.password);
-        btnRegister = (Button) findViewById(R.id.btnRegister);
-        btnLinkToLogin = (Button) findViewById(R.id.btnLinkToLoginScreen);
+        setupView();
+        checkSession();
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
-        session = new SessionManager(getApplicationContext());
+        setupButtonsListeners();
 
-        if (session.isLoggedIn()) {
-
-            Intent intent = new Intent(RegisterActivity.this,
-                    MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
-
-
+    }
+    private void setupButtonsListeners() {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 String name = inputFullName.getText().toString().trim();
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
+                String username = inputUsername.getText().toString().trim();
 
-                if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
-                    registerUser(name, email, password);
+                if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !username.isEmpty()) {
+                    registerUser(name, email, password, username);
                 } else {
                     Toast.makeText(getApplicationContext(),
                             "Please enter your details!", Toast.LENGTH_LONG)
@@ -86,10 +77,28 @@ public class RegisterActivity extends Activity {
         });
 
     }
+    private void checkSession() {
+        session = new SessionManager(getApplicationContext());
 
+        if (session.isLoggedIn()) {
+
+            Intent intent = new Intent(RegisterActivity.this,
+                    MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+    private void setupView() {
+        inputFullName = (EditText) findViewById(R.id.name);
+        inputEmail = (EditText) findViewById(R.id.email);
+        inputPassword = (EditText) findViewById(R.id.password);
+        inputUsername = (EditText) findViewById(R.id.username);
+        btnRegister = (Button) findViewById(R.id.btnRegister);
+        btnLinkToLogin = (Button) findViewById(R.id.btnLinkToLoginScreen);
+    }
 
     private void registerUser(final String name, final String email,
-                              final String password) {
+                              final String password, final String username) {
 
         String tag_string_req = "req_register";
 
@@ -114,10 +123,9 @@ public class RegisterActivity extends Activity {
                         JSONObject user = jObj.getJSONObject("user");
                         String name = user.getString("name");
                         String email = user.getString("email");
+                        //String username = user.getString("username");
                         String created_at = user
                                 .getString("created_at");
-
-
 
                         Toast.makeText(getApplicationContext(), "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
 
@@ -155,13 +163,12 @@ public class RegisterActivity extends Activity {
                 params.put("name", name);
                 params.put("email", email);
                 params.put("password", password);
+                //params.put("username", username);
 
                 return params;
             }
 
         };
-
-
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 

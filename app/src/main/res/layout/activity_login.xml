@@ -15,16 +15,25 @@
         android:paddingLeft="20dp"
         android:paddingRight="20dp" >
 
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="-50dp"
+            android:paddingTop="@dimen/nav_header_vertical_spacing"
+            android:src="@drawable/android_logo_by_ockre" />
+
         <EditText
             android:id="@+id/email"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@color/white"
             android:hint="@string/hint_email"
             android:inputType="textEmailAddress"
             android:padding="10dp"
             android:singleLine="true"
+            android:background="@color/white"
             android:textColor="@color/input_login"
             android:textColorHint="@color/input_login_hint" />
 
@@ -41,27 +50,24 @@
             android:textColor="@color/input_login"
             android:textColorHint="@color/input_login_hint" />
 
-        <!-- Login Button -->
 
         <Button
             android:id="@+id/btnLogin"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
-            android:background="@color/btn_login_bg"
             android:text="@string/btn_login"
+            android:background="@color/btn_login_bg"
             android:textColor="@color/btn_login" />
-
-        <!-- Link to Login Screen -->
 
         <Button
             android:id="@+id/btnLinkToRegisterScreen"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dip"
-            android:background="@null"
             android:text="@string/btn_link_to_register"
             android:textAllCaps="false"
+            android:background="@null"
             android:textColor="@color/white"
             android:textSize="15dp" />
     </LinearLayout>

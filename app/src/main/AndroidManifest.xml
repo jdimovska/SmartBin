@@ -22,8 +22,12 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".QRScannerActivity" android:screenOrientation="portrait"></activity>
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+
+        <activity android:name=".UpdateAccountActivity"></activity>
     </application>
 
 </manifest>
