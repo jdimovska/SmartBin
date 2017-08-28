@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_map) {
 
         } else if (id == R.id.nav_firms) {
-            Intent intent = new Intent(getApplicationContext(), FirmsActivity.class);
+            Intent intent = new Intent(getApplicationContext(), BaseFirmActivity.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_scan) {
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_home) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
-            session.setLogin(false);
+
 
         } else if (id == R.id.nav_log_out) {
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
@@ -157,9 +157,8 @@ public class MainActivity extends AppCompatActivity
             session.setLogin(false);
 
         } else if (id == R.id.nav_user) {
-            Intent intent = new Intent(getApplicationContext(), UpdateAccountActivity.class);
+            Intent intent = new Intent(getApplicationContext(),UpdateAccountActivity.class);
             startActivity(intent);
-            session.setLogin(false);
 
         }
 

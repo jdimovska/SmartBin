@@ -7,9 +7,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="@string/home_title"
+        android:text="Name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:paddingBottom="30dp"
         android:textSize="20dp"
         android:textColor="@color/btn_login_bg"
         android:textStyle="bold"
@@ -21,9 +20,10 @@
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="@string/home_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:paddingBottom="30dp"
-        android:textSize="20dp"
-        android:textColor="@color/btn_login_bg"
+        android:paddingBottom="10dp"
+        android:textSize="16dp"
+        android:textColor="@color/btn_logut_bg"
         android:textStyle="bold"
         />
+
 </LinearLayout>
