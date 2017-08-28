@@ -133,12 +133,14 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_scan) {
             qrScan.setPrompt("");
+            finish();
             qrScan.setOrientationLocked(false);
             qrScan.initiateScan();
 
         } else if (id == R.id.nav_home) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
+            finish();
             session.setLogin(false);
 
         } else if (id == R.id.nav_log_out) {
@@ -149,7 +151,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_user) {
             Intent intent = new Intent(getApplicationContext(), UpdateAccountActivity.class);
-
+            finish();
             startActivity(intent);
             session.setLogin(false);
 
