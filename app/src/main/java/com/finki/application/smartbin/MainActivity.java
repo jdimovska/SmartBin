@@ -1,10 +1,13 @@
 package com.finki.application.smartbin;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -32,7 +35,9 @@ public class MainActivity extends AppCompatActivity
     public Button btnScan;
     private IntentIntegrator qrScan;
     private SessionManager session;
-
+    private Context mContext;
+    private static FragmentManager mManager;
+    Fragment fragment = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +48,8 @@ public class MainActivity extends AppCompatActivity
         setupDrawer();
 
     }
+
+
     public void setupDrawer() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -130,17 +137,17 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_map) {
 
         } else if (id == R.id.nav_firms) {
+            Intent intent = new Intent(getApplicationContext(), FirmsActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_scan) {
             qrScan.setPrompt("");
-            finish();
             qrScan.setOrientationLocked(false);
             qrScan.initiateScan();
 
         } else if (id == R.id.nav_home) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
-            finish();
             session.setLogin(false);
 
         } else if (id == R.id.nav_log_out) {
@@ -151,7 +158,6 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_user) {
             Intent intent = new Intent(getApplicationContext(), UpdateAccountActivity.class);
-            finish();
             startActivity(intent);
             session.setLogin(false);
 

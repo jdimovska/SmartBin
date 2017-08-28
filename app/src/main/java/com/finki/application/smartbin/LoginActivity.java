@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -157,6 +158,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 return params;
             }
+
 
         };
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
