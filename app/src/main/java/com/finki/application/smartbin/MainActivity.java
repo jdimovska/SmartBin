@@ -135,6 +135,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_map) {
+            Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_firms) {
             Intent intent = new Intent(getApplicationContext(), BaseFirmActivity.class);

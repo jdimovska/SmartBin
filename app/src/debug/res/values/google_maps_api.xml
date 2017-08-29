@@ -1,0 +1,21 @@
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=D4:B0:90:33:7E:AE:62:81:7C:9B:9D:B2:15:B8:C1:D2:39:88:89:43%3Bcom.finki.application.smartbin
+
+    You can also add your credentials to an existing key, using this line:
+    D4:B0:90:33:7E:AE:62:81:7C:9B:9D:B2:15:B8:C1:D2:39:88:89:43;com.finki.application.smartbin
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+      AIzaSyCFPSEovBZ1XQpjRwMd7O3mL0WX33AuOCc
+    </string>
+</resources>
