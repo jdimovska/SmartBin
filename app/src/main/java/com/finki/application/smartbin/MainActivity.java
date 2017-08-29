@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
     public void scanClick(View view){
-        qrScan.setPrompt("");
+            qrScan.setPrompt("");
         qrScan.setOrientationLocked(false);
         qrScan.initiateScan();
     }
