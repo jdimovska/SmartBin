@@ -113,19 +113,21 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
                     data=reader.read();
                 }
 
-                JSONArray obj=new JSONArray(result);
-                for(int i=0;i<obj.length();i++){
-                    JSONObject objJson=obj.getJSONObject(i);
-                    String id = objJson.getString("id");
-                    String name = objJson.getString("name");
-                    String email = objJson.getString("email");
-                    String location = objJson.getString("location");
-                    String phone = objJson.getString("phone");
-                    String urlFirm = objJson.getString("url");
+
+
+                JSONArray jsonArray=new JSONArray(result);
+                for(int i=0;i<jsonArray.length();i++){
+                    JSONObject jsonObject=jsonArray.getJSONObject(i);
+                    String id = jsonObject.getString("id");
+                    String name = jsonObject.getString("name");
+                    String email = jsonObject.getString("email");
+                    String location = jsonObject.getString("location");
+                    String phone = jsonObject.getString("phone");
+                    String urlFirm = jsonObject.getString("url");
                     Firm firm=new Firm(name,email,location,phone,urlFirm);
                     firmsList.add(firm);
                 }
-                    Log.i("json: ",result);
+
 
             }catch(Exception e ){
             }
