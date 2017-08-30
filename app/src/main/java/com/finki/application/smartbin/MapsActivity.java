@@ -4,7 +4,12 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+
+import com.finki.application.smartbin.models.Container;
+import com.finki.application.smartbin.models.Firm;
 import com.google.android.gms.location.LocationListener;
+
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,12 +32,23 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
+    ArrayList<Container> containerList;
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
@@ -44,6 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        containerList=new ArrayList<>();
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
@@ -56,12 +73,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
                 mMap.setMyLocationEnabled(true);
+                DownloadTask task=new DownloadTask();
+                task.execute("https://jonadimovska.000webhostapp.com/containers.php");
             }
         }
         else {
@@ -70,6 +90,78 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
     }
+    public class DownloadTask extends AsyncTask<String,Void,String> {
+
+
+        @Override
+        protected String doInBackground(String... urls) {
+            String result="";
+            URL url;
+            HttpURLConnection urlConnection=null;
+            try{
+                url=new URL(urls[0]);
+                urlConnection=(HttpURLConnection) url.openConnection();
+                InputStream in=urlConnection.getInputStream();
+                InputStreamReader reader=new InputStreamReader(in);
+                int data=reader.read();
+                while(data!=-1){
+                    char current=(char) data;
+                    result+=current;
+                    data=reader.read();
+                }
+
+
+
+                JSONArray jsonArray=new JSONArray(result);
+                for(int i=0;i<jsonArray.length();i++){
+                    JSONObject jsonObject=jsonArray.getJSONObject(i);
+                    String id = jsonObject.getString("id");
+                    String longitude = jsonObject.getString("longitude");
+                    String latitude = jsonObject.getString("latitude");
+                    String capacity = jsonObject.getString("capacity");
+                    String maxCapacity = jsonObject.getString("maxCapacity");
+                    String id_ttn = jsonObject.getString("id_ttn");
+
+
+                    Double longitudeDouble=Double.parseDouble(longitude);
+                    Double latitudeDouble=Double.parseDouble(latitude);
+                    Double capacityDouble=Double.parseDouble(capacity);
+                    Double maxCapacityDouble=Double.parseDouble(maxCapacity);
+                    Container container=new Container(Integer.parseInt(id),longitudeDouble,latitudeDouble,capacityDouble,maxCapacityDouble,Integer.parseInt(id_ttn));
+                    containerList.add(container);
+
+                }
+
+
+            }catch(Exception e ){
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            for(int i=0;i<containerList.size();i++){
+                LatLng latLng = new LatLng(containerList.get(i).latitude,containerList.get(i).longitude);
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.title("Current Position");
+                Double percentage=containerList.get(i).capacity/containerList.get(i).maxCapacity;
+                if(percentage<0.6){
+                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                }else if(percentage>=0.6 && percentage<0.8){
+                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                }else{
+                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                }
+
+
+                mMap.addMarker(markerOptions);
+            }
+
+        }
+    }
+
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -79,6 +171,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mGoogleApiClient.connect();
     }
+
     @Override
     public void onLocationChanged(Location location)
     {
