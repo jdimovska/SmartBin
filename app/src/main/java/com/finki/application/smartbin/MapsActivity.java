@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.AvoidType;
+import com.akexorcist.googledirection.model.Direction;
 import com.finki.application.smartbin.models.Container;
 import com.finki.application.smartbin.models.Firm;
 import com.google.android.gms.location.LocationListener;
@@ -68,6 +72,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
+
     }
 
     @Override
@@ -82,6 +88,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.setMyLocationEnabled(true);
                 DownloadTask task=new DownloadTask();
                 task.execute("https://jonadimovska.000webhostapp.com/containers.php");
+
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        LatLng curr=mCurrLocationMarker.getPosition();
+                        Toast.makeText(getApplicationContext(),curr.toString(),Toast.LENGTH_LONG).show();
+                        GoogleDirection.withServerKey("AIzaSyCM6qOQa5TTYcPyfocEIceJLjsVXMP-AGI")
+                                .from(curr)
+                                .to(marker.getPosition())
+                                .avoid(AvoidType.FERRIES)
+                                .avoid(AvoidType.HIGHWAYS)
+                                .execute(new DirectionCallback() {
+                                    @Override
+                                    public void onDirectionSuccess(Direction direction, String rawBody) {
+                                        Toast.makeText(getApplicationContext(),direction.getStatus(),Toast.LENGTH_LONG).show();
+                                        if(direction.isOK()) {
+                                            // Do something
+
+
+
+
+
+                                            Toast.makeText(getApplicationContext(),"yes",Toast.LENGTH_LONG).show();
+                                        } else {
+                                            // Do something
+                                            Toast.makeText(getApplicationContext(),"no",Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onDirectionFailure(Throwable t) {
+                                        // Do something
+                                    }
+                                });
+                        Toast.makeText(getApplicationContext(),"YOU CLICKED ON "+marker.getTitle(),Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                });
             }
         }
         else {
