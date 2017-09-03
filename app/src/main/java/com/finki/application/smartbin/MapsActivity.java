@@ -2,13 +2,19 @@ package com.finki.application.smartbin;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.AvoidType;
 import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.model.Step;
+import com.akexorcist.googledirection.util.DirectionConverter;
 import com.finki.application.smartbin.models.Container;
 import com.finki.application.smartbin.models.Firm;
 import com.google.android.gms.location.LocationListener;
@@ -21,6 +27,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 
@@ -35,6 +42,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,6 +53,7 @@ import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -92,7 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
 
                     @Override
-                    public boolean onMarkerClick(Marker marker) {
+                    public boolean onMarkerClick(final Marker marker) {
                         LatLng curr=mCurrLocationMarker.getPosition();
                         Toast.makeText(getApplicationContext(),curr.toString(),Toast.LENGTH_LONG).show();
                         GoogleDirection.withServerKey("AIzaSyCM6qOQa5TTYcPyfocEIceJLjsVXMP-AGI")
@@ -102,16 +111,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .avoid(AvoidType.HIGHWAYS)
                                 .execute(new DirectionCallback() {
                                     @Override
-                                    public void onDirectionSuccess(Direction direction, String rawBody) {
-                                        Toast.makeText(getApplicationContext(),direction.getStatus(),Toast.LENGTH_LONG).show();
+                                    public void onDirectionSuccess(final Direction direction, String rawBody) {
+                                        //Toast.makeText(getApplicationContext(),direction.getStatus(),Toast.LENGTH_LONG).show();
                                         if(direction.isOK()) {
-                                            // Do something
+                                            StringBuilder sb = new StringBuilder();
+                                            sb.append("Get direction to : ");
+                                            sb.append(marker.getPosition().toString());
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                                            builder.setMessage(sb)
+                                                    .setTitle("Get directions")
+                                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            List<Step> stepList = direction.getRouteList().get(0).getLegList().get(0).getStepList();
+                                                            ArrayList<PolylineOptions> polylineOptionList = DirectionConverter.createTransitPolyline(getApplicationContext(), stepList, 5, Color.RED, 3, Color.BLUE);
+                                                            for (PolylineOptions polylineOption : polylineOptionList) {
+                                                                mMap.addPolyline(polylineOption);
+                                                            }
+                                                            dialog.cancel();
+                                                        }
+                                                    });
+
+                                            AlertDialog dialog = builder.create();
+                                            dialog.show();
 
 
 
 
 
-                                            Toast.makeText(getApplicationContext(),"yes",Toast.LENGTH_LONG).show();
                                         } else {
                                             // Do something
                                             Toast.makeText(getApplicationContext(),"no",Toast.LENGTH_LONG).show();
