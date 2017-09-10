@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.finki.application.smartbin.BaseFirmActivity"
-    android:background="@color/btn_login_bg">
+    android:background="@color/bg_login">
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_firms"

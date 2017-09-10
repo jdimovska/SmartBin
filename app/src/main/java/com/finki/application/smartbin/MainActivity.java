@@ -3,6 +3,7 @@ package com.finki.application.smartbin;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,15 +21,33 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.finki.application.smartbin.models.Firm;
+import com.finki.application.smartbin.models.User;
+import com.finki.application.smartbin.rest_services.AppConfig;
+import com.finki.application.smartbin.rest_services.AppController;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -38,11 +57,24 @@ public class MainActivity extends AppCompatActivity
     private Context mContext;
     private static FragmentManager mManager;
     Fragment fragment = null;
+    ArrayList<User> usersList;
+    CustomUsersAdapter adapter;
+    ListView viewListUsers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        session = new SessionManager(getApplicationContext());
         setContentView(R.layout.activity_main);
+        usersList=new ArrayList<>();
+        adapter=new CustomUsersAdapter(this,usersList);
+
+        viewListUsers=(ListView) findViewById (R.id.userAdapterList);
+        viewListUsers.setAdapter(adapter);
+
+        DownloadTask task=new DownloadTask();
+        task.execute("https://jonadimovska.000webhostapp.com/best.php");
+
+        session = new SessionManager(getApplicationContext());
+       // setContentView(R.layout.activity_main);
         btnScan = (Button) findViewById(R.id.btnScan);
         qrScan = new IntentIntegrator(this);
         setupDrawer();
@@ -96,6 +128,46 @@ public class MainActivity extends AppCompatActivity
                             .setTitle(R.string.congrats_title)
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
+
+                                    StringRequest strReq = new StringRequest(Request.Method.POST,
+                                            AppConfig.URL_UPDATE_USER_POINTS, new Response.Listener<String>() {
+
+                                        @Override
+                                        public void onResponse(String response) {
+                                            Toast.makeText(getApplicationContext(),"Successfully updated!",Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+
+                                        }
+                                    }) {
+
+                                        @Override
+                                        protected Map<String, String> getParams() {
+                                            Map<String, String> params = new HashMap<String, String>();
+                                            params.put("email", session.getEmail());
+                                            params.put("points","100");
+
+                                            return params;
+                                        }
+
+
+                                    };
+                                    AppController.getInstance().addToRequestQueue(strReq);
+
+
+
+
+
+
+
+
+
+
+
+
                                     dialog.cancel();
                                 }
                             });
@@ -145,7 +217,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_scan) {
             qrScan.setPrompt("");
             qrScan.setOrientationLocked(false);
-            qrScan.initiateScan();
+                qrScan.initiateScan();
 
         } else if (id == R.id.nav_home) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -169,5 +241,55 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+
+
+
+
+    public class DownloadTask extends AsyncTask<String,Void,String> {
+
+
+        @Override
+        protected String doInBackground(String... urls) {
+            String result="";
+            URL url;
+            HttpURLConnection urlConnection=null;
+            try{
+                url=new URL(urls[0]);
+                urlConnection=(HttpURLConnection) url.openConnection();
+                InputStream in=urlConnection.getInputStream();
+                InputStreamReader reader=new InputStreamReader(in);
+                int data=reader.read();
+                while(data!=-1){
+                    char current=(char) data;
+                    result+=current;
+                    data=reader.read();
+                }
+
+
+
+                JSONArray jsonArray=new JSONArray(result);
+                for(int i=0;i<jsonArray.length();i++){
+                    JSONObject jsonObject=jsonArray.getJSONObject(i);
+
+                    String name = jsonObject.getString("name");
+                    String username = jsonObject.getString("username");
+                    String points = jsonObject.getString("points");
+
+                    User user=new User(name,username,Double.parseDouble(points));
+                    usersList.add(user);
+                }
+
+
+            }catch(Exception e ){
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            adapter.notifyDataSetChanged();
+        }
+    }
 
 }
