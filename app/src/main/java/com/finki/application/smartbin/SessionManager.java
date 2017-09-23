@@ -20,6 +20,8 @@ public class SessionManager {
     private static final String KEY_FULLNAME = "fullName";
     private static final String KEY_USERNAME = "username";
     private static final String KEY_EMAIL = "email";
+    private static final String KEY_POINTS = "points";
+
 
     public SessionManager(Context context) {
         this._context = context;
@@ -47,6 +49,11 @@ public class SessionManager {
         editor.commit();
         Log.d(TAG, "User email stored!");
     }
+    public void setPoints(String points) {
+        editor.putString(KEY_POINTS, points);
+        editor.commit();
+        Log.d(TAG, "User points stored!");
+    }
 
     public boolean isLoggedIn(){
         return pref.getBoolean(KEY_IS_LOGGEDIN, false);
@@ -61,4 +68,9 @@ public class SessionManager {
     public String getFullname() {
         return pref.getString(KEY_FULLNAME,"");
     }
+
+    public String getPoints() {
+        return pref.getString(KEY_POINTS,"");
+    }
+
 }

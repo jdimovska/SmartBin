@@ -148,7 +148,10 @@ public class MainActivity extends AppCompatActivity
                                         protected Map<String, String> getParams() {
                                             Map<String, String> params = new HashMap<String, String>();
                                             params.put("email", session.getEmail());
-                                            params.put("points","100");
+                                            String points=session.getPoints();
+                                            Double doublePoints=Double.parseDouble(points);
+                                            doublePoints+=100;
+                                            params.put("points",doublePoints+"");
 
                                             return params;
                                         }

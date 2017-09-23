@@ -117,11 +117,15 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject user = jObj.getJSONObject("user");
                         String name = user.getString("name");
                         String email = user.getString("email");
+                        String username = user.getString("username");
+                        String points=user.getString("points");
+
                         String created_at = user
                                 .getString("created_at");
                         session.setEmail(email);
                         session.setFullName(name);
-                        //session.setUsername(username);
+                        session.setUsername(username);
+                        session.setPoints(points);
                         Intent intent = new Intent(LoginActivity.this,
                                 MainActivity.class);
                         startActivity(intent);
