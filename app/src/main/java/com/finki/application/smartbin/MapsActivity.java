@@ -17,8 +17,10 @@ import com.akexorcist.googledirection.model.Step;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.finki.application.smartbin.models.Container;
 import com.finki.application.smartbin.models.Firm;
+
 import com.google.android.gms.location.LocationListener;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 
@@ -68,23 +71,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    final CharSequence[] items = {"Glass","Plastic","Metal","Paper", "Scrap"};
+    final CharSequence[] items = {"Glass", "Plastic", "Metal", "Paper", "Scrap"};
     final ArrayList seletedItems = new ArrayList();
-
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+    SupportMapFragment mapFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        containerList=new ArrayList<>();
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        containerList = new ArrayList<>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mapFragment= (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         showOptionsDialogBox();
 
+
     }
+
     public void showOptionsDialogBox() {
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("What are you going to recycle?")
@@ -100,7 +110,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-
+                        mMap.clear();
+                        DownloadTask task = new DownloadTask();
+                        task.execute("https://jonadimovska.000webhostapp.com/containers.php");
                         dialog.dismiss();
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -117,21 +129,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
                 mMap.setMyLocationEnabled(true);
-                DownloadTask task=new DownloadTask();
-                task.execute("https://jonadimovska.000webhostapp.com/containers.php");
+//                DownloadTask task = new DownloadTask();
+//                task.execute("https://jonadimovska.000webhostapp.com/containers.php");
 
-                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
                     @Override
                     public boolean onMarkerClick(final Marker marker) {
-                        LatLng curr=mCurrLocationMarker.getPosition();
-                        Toast.makeText(getApplicationContext(),curr.toString(),Toast.LENGTH_LONG).show();
+                        LatLng curr = mCurrLocationMarker.getPosition();
+                        Toast.makeText(getApplicationContext(), curr.toString(), Toast.LENGTH_LONG).show();
                         GoogleDirection.withServerKey("AIzaSyCM6qOQa5TTYcPyfocEIceJLjsVXMP-AGI")
                                 .from(curr)
                                 .to(marker.getPosition())
@@ -141,7 +153,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     @Override
                                     public void onDirectionSuccess(final Direction direction, String rawBody) {
                                         //Toast.makeText(getApplicationContext(),direction.getStatus(),Toast.LENGTH_LONG).show();
-                                        if(direction.isOK()) {
+                                        if (direction.isOK()) {
                                             StringBuilder sb = new StringBuilder();
                                             sb.append("Get direction to : ");
                                             sb.append(marker.getPosition().toString());
@@ -163,12 +175,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             dialog.show();
 
 
-
-
-
                                         } else {
                                             // Do something
-                                            Toast.makeText(getApplicationContext(),"no",Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getApplicationContext(), "no", Toast.LENGTH_LONG).show();
                                         }
                                     }
 
@@ -177,62 +186,78 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         // Do something
                                     }
                                 });
-                        Toast.makeText(getApplicationContext(),"YOU CLICKED ON "+marker.getTitle(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "YOU CLICKED ON " + marker.getTitle(), Toast.LENGTH_LONG).show();
                         return false;
                     }
                 });
             }
-        }
-        else {
+        } else {
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
 
     }
-    public class DownloadTask extends AsyncTask<String,Void,String> {
+
+
+
+
+    public class DownloadTask extends AsyncTask<String, Void, String> {
 
 
         @Override
         protected String doInBackground(String... urls) {
-            String result="";
+            String result = "";
             URL url;
-            HttpURLConnection urlConnection=null;
-            try{
-                url=new URL(urls[0]);
-                urlConnection=(HttpURLConnection) url.openConnection();
-                InputStream in=urlConnection.getInputStream();
-                InputStreamReader reader=new InputStreamReader(in);
-                int data=reader.read();
-                while(data!=-1){
-                    char current=(char) data;
-                    result+=current;
-                    data=reader.read();
+            HttpURLConnection urlConnection = null;
+            try {
+                url = new URL(urls[0]);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = urlConnection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(in);
+                int data = reader.read();
+                while (data != -1) {
+                    char current = (char) data;
+                    result += current;
+                    data = reader.read();
                 }
 
 
-
-                JSONArray jsonArray=new JSONArray(result);
-                for(int i=0;i<jsonArray.length();i++){
-                    JSONObject jsonObject=jsonArray.getJSONObject(i);
+                JSONArray jsonArray = new JSONArray(result);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
                     String id = jsonObject.getString("id");
                     String longitude = jsonObject.getString("longitude");
                     String latitude = jsonObject.getString("latitude");
                     String capacity = jsonObject.getString("capacity");
                     String maxCapacity = jsonObject.getString("maxCapacity");
                     String id_ttn = jsonObject.getString("id_ttn");
+                    String category = jsonObject.getString("category");
+
+                    byte[] valueDecoded= Base64.decode(capacity,Base64.DEFAULT );
 
 
-                    Double longitudeDouble=Double.parseDouble(longitude);
-                    Double latitudeDouble=Double.parseDouble(latitude);
-                    Double capacityDouble=Double.parseDouble(capacity);
-                    Double maxCapacityDouble=Double.parseDouble(maxCapacity);
-                    Container container=new Container(Integer.parseInt(id),longitudeDouble,latitudeDouble,capacityDouble,maxCapacityDouble,Integer.parseInt(id_ttn));
+                    String capacityDecoded = "";
+
+                    for(int j = 0;j < valueDecoded.length; j++)
+                    {
+                        capacityDecoded += valueDecoded[j];
+                    }
+
+
+
+
+                    Double longitudeDouble = Double.parseDouble(longitude);
+                    Double latitudeDouble = Double.parseDouble(latitude);
+                    Double capacityDouble = Double.parseDouble(capacityDecoded);
+                    Double maxCapacityDouble = Double.parseDouble(maxCapacity);
+                    Integer categoryInt = Integer.parseInt(category);
+                    Container container = new Container(Integer.parseInt(id), longitudeDouble, latitudeDouble, capacityDouble, maxCapacityDouble, Integer.parseInt(id_ttn), categoryInt);
                     containerList.add(container);
 
                 }
 
 
-            }catch(Exception e ){
+            } catch (Exception e) {
             }
             return null;
         }
@@ -240,17 +265,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            for(int i=0;i<containerList.size();i++){
-                LatLng latLng = new LatLng(containerList.get(i).latitude,containerList.get(i).longitude);
+            for (int i = 0; i < containerList.size(); i++) {
+                LatLng latLng = new LatLng(containerList.get(i).latitude, containerList.get(i).longitude);
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title("Current Position");
-                Double percentage=containerList.get(i).capacity/containerList.get(i).maxCapacity;
-                if(percentage<0.6){
+                Double percentage = containerList.get(i).capacity / containerList.get(i).maxCapacity;
+                if (percentage < 0.6) {
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                }else if(percentage>=0.6 && percentage<0.8){
+                } else if (percentage >= 0.6 && percentage < 0.8) {
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                }else{
+                } else {
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 }
 
@@ -272,8 +297,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onLocationChanged(Location location)
-    {
+    public void onLocationChanged(Location location) {
         mLastLocation = location;
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
@@ -312,7 +336,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public boolean checkLocationPermission(){
+    public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -335,6 +359,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return true;
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -362,6 +387,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
     }
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 

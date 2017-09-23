@@ -39,4 +39,5 @@ dependencies {
     compile 'com.akexorcist:googledirectionlibrary:1.0.5'
 
     testCompile 'junit:junit:4.12'
+
 }
