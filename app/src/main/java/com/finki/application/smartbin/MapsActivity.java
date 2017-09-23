@@ -71,14 +71,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    final CharSequence[] items = {"Glass", "Plastic", "Metal", "Paper", "Scrap"};
-    final ArrayList seletedItems = new ArrayList();
+    public CharSequence[] items = {};
+    ArrayList selectedItems = new ArrayList();
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
     SupportMapFragment mapFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,8 +91,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment= (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        DownloadCategoryTask task1 = new DownloadCategoryTask();
+        task1.execute("https://jonadimovska.000webhostapp.com/categories.php");
         showOptionsDialogBox();
-
 
     }
 
@@ -102,9 +104,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
                         if (isChecked) {
-                            seletedItems.add(indexSelected);
-                        } else if (seletedItems.contains(indexSelected)) {
-                            seletedItems.remove(Integer.valueOf(indexSelected));
+                            selectedItems.add(indexSelected);
+                        } else if (selectedItems.contains(indexSelected)) {
+                            selectedItems.remove(Integer.valueOf(indexSelected));
                         }
                     }
                 }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -118,7 +120,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        seletedItems.clear();
+                        selectedItems.clear();
                         dialog.dismiss();
                     }
                 }).create();
@@ -203,7 +205,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public class DownloadTask extends AsyncTask<String, Void, String> {
 
-
         @Override
         protected String doInBackground(String... urls) {
             String result = "";
@@ -234,8 +235,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     String category = jsonObject.getString("category");
 
                     byte[] valueDecoded= Base64.decode(capacity,Base64.DEFAULT );
-
-
                     String capacityDecoded = "";
 
                     for(int j = 0;j < valueDecoded.length; j++)
@@ -243,19 +242,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         capacityDecoded += valueDecoded[j];
                     }
 
-
-
-
                     Double longitudeDouble = Double.parseDouble(longitude);
                     Double latitudeDouble = Double.parseDouble(latitude);
                     Double capacityDouble = Double.parseDouble(capacityDecoded);
                     Double maxCapacityDouble = Double.parseDouble(maxCapacity);
                     Integer categoryInt = Integer.parseInt(category);
-                    Container container = new Container(Integer.parseInt(id), longitudeDouble, latitudeDouble, capacityDouble, maxCapacityDouble, Integer.parseInt(id_ttn), categoryInt);
-                    containerList.add(container);
+                    String parsedCategory = "";
+                    if (items.length > 0) {
+                        parsedCategory = items[categoryInt].toString();
+                    }
 
+                    if (selectedItems.contains(parsedCategory) || selectedItems.isEmpty()) {
+                        Container container = new Container(Integer.parseInt(id), longitudeDouble, latitudeDouble, capacityDouble, maxCapacityDouble, Integer.parseInt(id_ttn), categoryInt);
+                        containerList.add(container);
+                    }
                 }
-
 
             } catch (Exception e) {
             }
@@ -285,6 +286,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
     }
+
+    public class DownloadCategoryTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            String result="";
+            URL url;
+            HttpURLConnection urlConnection=null;
+            try{
+                url=new URL(urls[0]);
+                urlConnection=(HttpURLConnection) url.openConnection();
+                InputStream in=urlConnection.getInputStream();
+                InputStreamReader reader=new InputStreamReader(in);
+                int data=reader.read();
+                while(data!=-1){
+                    char current=(char) data;
+                    result+=current;
+                    data=reader.read();
+                }
+
+                JSONArray jsonArray=new JSONArray(result);
+                for(int i=0;i<jsonArray.length();i++){
+                    JSONObject jsonObject=jsonArray.getJSONObject(i);
+
+                    String category = jsonObject.getString("category");
+                    items[items.length] = category;
+                }
+
+
+            }catch(Exception e ){
+            }
+            return null;
+        }
+    }
+
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
