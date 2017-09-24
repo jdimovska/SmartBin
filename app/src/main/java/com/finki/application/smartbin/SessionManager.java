@@ -73,4 +73,5 @@ public class SessionManager {
         return pref.getString(KEY_POINTS,"");
     }
 
+
 }

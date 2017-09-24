@@ -43,7 +43,8 @@ public class CustomUsersAdapter extends ArrayAdapter<User> {
     }
     void fillUpTextFields(User user) {
         username.setText(user.username);
-        points.setText(Double.toString(user.points));
+        int pointsInt = (int) user.points;
+        points.setText(Integer.toString(pointsInt));
         String initials[] = user.name.split(" ");
         String letters = "";
         if (initials.length == 1) {

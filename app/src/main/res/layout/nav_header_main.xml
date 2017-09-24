@@ -14,10 +14,15 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@android:drawable/sym_def_app_icon" />
+        android:src="@drawable/logo"
+        android:scaleType="fitStart"
+
+        android:layout_weight="1"
+
+      />
 
     <TextView
         android:id="@+id/header_fullname"
@@ -31,7 +36,8 @@
         android:id="@+id/header_points"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="50 points!" />
+        android:text="50 points!"
+        android:textStyle="bold"/>
 
 
 
