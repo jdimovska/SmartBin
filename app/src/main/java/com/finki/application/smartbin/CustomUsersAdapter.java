@@ -1,13 +1,17 @@
 package com.finki.application.smartbin;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.finki.application.smartbin.models.Firm;
 import com.finki.application.smartbin.models.User;
 
@@ -19,7 +23,7 @@ import java.util.ArrayList;
 
 public class CustomUsersAdapter extends ArrayAdapter<User> {
     User user;
-    TextView name;
+    ImageView image;
     TextView username;
     TextView points;
 
@@ -38,15 +42,26 @@ public class CustomUsersAdapter extends ArrayAdapter<User> {
         return convertView;
     }
     void fillUpTextFields(User user) {
-        name.setText(user.name);
         username.setText(user.username);
         points.setText(Double.toString(user.points));
+        String initials[] = user.name.split(" ");
+        String letters = "";
+        if (initials.length == 1) {
+            letters = initials[0].charAt(0)+"";
+        } else if (initials.length == 0) {
+            letters = "?";
+        } else {
+            letters = initials[0].charAt(0)+""+initials[1].charAt(0);
+        }
+
+        TextDrawable drawable = TextDrawable.builder().buildRect(letters,Color.rgb(38,174,144));
+        image.setImageDrawable(drawable);
 
     }
     void setupTextFields(View convertView) {
-        name = (TextView) convertView.findViewById(R.id.User);
         username = (TextView) convertView.findViewById(R.id.Username);
         points = (TextView) convertView.findViewById(R.id.userPoints);
+        image = (ImageView) convertView.findViewById(R.id.image);
 
     }
 }

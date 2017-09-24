@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.finki.application.smartbin.MainActivity">
+    tools:context="com.finki.application.smartbin.MainActivity"
+    android:background="@color/light_gray">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

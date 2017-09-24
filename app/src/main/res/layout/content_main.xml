@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:background="@color/bg_login"
+    android:background="@color/light_gray"
     tools:context="com.finki.application.smartbin.MainActivity"
     tools:showIn="@layout/app_bar_main"
     android:padding="10dp" >
@@ -36,7 +36,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:paddingBottom="30dp"
             android:textSize="20dp"
-            android:textColor="@color/btn_login_bg"
+            android:textColor="@color/btn_login"
             android:textStyle="bold"
             />
 
@@ -55,9 +55,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dip"
-        android:background="@color/btn_login_bg"
+        android:background="@color/btn_login"
         android:text="@string/btn_scan"
-        android:textColor="@color/btn_login"
+        android:textColor="@color/btn_login_bg"
             android:onClick="scanClick"
             />
     </LinearLayout>

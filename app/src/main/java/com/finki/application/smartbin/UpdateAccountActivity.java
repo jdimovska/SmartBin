@@ -82,6 +82,9 @@ public class UpdateAccountActivity extends AppCompatActivity {
                     params.put("username", inputUsername.getText().toString().trim());
                     params.put("email", inputEmail.getText().toString().trim());
 
+                    session.setFullName(inputFullName.getText().toString().trim());
+                    session.setUsername(inputUsername.getText().toString().trim());
+
                     return params;
                 }
 
@@ -127,6 +130,8 @@ public class UpdateAccountActivity extends AppCompatActivity {
                     params.put("email", inputEmail.getText().toString().trim());
                     params.put("password", inputNewPassword.getText().toString().trim());
 
+                    session.setFullName(inputFullName.getText().toString().trim());
+                    session.setUsername(inputUsername.getText().toString().trim());
                     return params;
                 }
 
