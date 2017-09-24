@@ -71,7 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    public CharSequence[] items = {};
+    public CharSequence[] items;
     ArrayList selectedItems = new ArrayList();
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -93,11 +93,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         DownloadCategoryTask task1 = new DownloadCategoryTask();
         task1.execute("https://jonadimovska.000webhostapp.com/categories.php");
-        showOptionsDialogBox();
 
     }
 
     public void showOptionsDialogBox() {
+
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("What are you going to recycle?")
                 .setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
@@ -247,12 +247,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Double capacityDouble = Double.parseDouble(capacityDecoded);
                     Double maxCapacityDouble = Double.parseDouble(maxCapacity);
                     Integer categoryInt = Integer.parseInt(category);
-                    String parsedCategory = "";
-                    if (items.length > 0) {
-                        parsedCategory = items[categoryInt].toString();
-                    }
 
-                    if (selectedItems.contains(parsedCategory) || selectedItems.isEmpty()) {
+                    if (selectedItems.contains(categoryInt) || selectedItems.isEmpty()) {
                         Container container = new Container(Integer.parseInt(id), longitudeDouble, latitudeDouble, capacityDouble, maxCapacityDouble, Integer.parseInt(id_ttn), categoryInt);
                         containerList.add(container);
                     }
@@ -307,21 +303,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
                 JSONArray jsonArray=new JSONArray(result);
+                items = new CharSequence[jsonArray.length()];
                 for(int i=0;i<jsonArray.length();i++){
                     JSONObject jsonObject=jsonArray.getJSONObject(i);
 
                     String category = jsonObject.getString("name");
-
-                    items[items.length] = category;
-
-
+                    items[i] = category;
                 }
-
 
             }catch(Exception e ){
             }
             return null;
         }
+        @Override
+        protected void onPostExecute(String result) {
+            showOptionsDialogBox();
+        }
+
+
     }
 
 
