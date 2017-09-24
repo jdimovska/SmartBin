@@ -35,8 +35,7 @@
         </activity>
         <activity
             android:name=".RegisterActivity"
-            android:label="SMART BIN"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:label="SMART BIN" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
