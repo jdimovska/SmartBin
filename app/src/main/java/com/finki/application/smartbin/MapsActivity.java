@@ -310,8 +310,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for(int i=0;i<jsonArray.length();i++){
                     JSONObject jsonObject=jsonArray.getJSONObject(i);
 
-                    String category = jsonObject.getString("category");
+                    String category = jsonObject.getString("name");
+
                     items[items.length] = category;
+
+
                 }
 
 
