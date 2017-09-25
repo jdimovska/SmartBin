@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -32,7 +33,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -57,9 +61,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -72,6 +80,7 @@ public class MainActivity extends AppCompatActivity
     ArrayList<User> usersList;
     CustomUsersAdapter adapter;
     AppDatabaseHelper helper;
+    Boolean flag;
     SQLiteDatabase dbDelete;
 
     ListView viewListUsers;
@@ -81,7 +90,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         usersList=new ArrayList<>();
         adapter=new CustomUsersAdapter(this,usersList);
-
+flag=false;
         viewListUsers=(ListView) findViewById (R.id.userAdapterList);
         viewListUsers.setAdapter(adapter);
 
@@ -146,6 +155,9 @@ public class MainActivity extends AppCompatActivity
                     sb.append("Points: "+obj.getString("points")+"\n"+"\n");
                     sb.append("Container ID: "+obj.getString("id_ttn")+"\n"+"\n");
 
+
+                    String str_result= new DownloadTaskCapacity().execute("https://jonadimovska.000webhostapp.com/mqtt.php").get();
+                    if(flag){
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage(sb)
                             .setTitle(R.string.congrats_title)
@@ -202,9 +214,17 @@ public class MainActivity extends AppCompatActivity
 
                     AlertDialog dialog = builder.create();
                     dialog.show();
+                    }
+                else{
+                    Toast.makeText(this,"Please throw garbage in order yo get points!",Toast.LENGTH_LONG).show();
+                }
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(this, result.getContents(), Toast.LENGTH_LONG).show();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
                 }
             }
         } else {
@@ -316,6 +336,64 @@ public class MainActivity extends AppCompatActivity
 
                     statement.execute();
 
+
+                }
+
+
+            }catch(Exception e ){
+            }
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            adapter.notifyDataSetChanged();
+        }
+    }
+    public class DownloadTaskCapacity extends AsyncTask<String,Void,String> {
+
+
+        @Override
+        protected String doInBackground(String... urls) {
+            String result="";
+            URL url;
+            HttpURLConnection urlConnection=null;
+            try{
+                url=new URL(urls[0]);
+                urlConnection=(HttpURLConnection) url.openConnection();
+                InputStream in=urlConnection.getInputStream();
+                InputStreamReader reader=new InputStreamReader(in);
+                int data=reader.read();
+                while(data!=-1){
+                    char current=(char) data;
+                    result+=current;
+                    data=reader.read();
+                }
+
+                JSONArray jsonArray=new JSONArray(result);
+
+                for(int i=0;i<jsonArray.length();i++){
+                    JSONObject jsonObject=jsonArray.getJSONObject(i);
+                    String device_id = jsonObject.getString("device_id");
+                    String raw=jsonObject.getString("raw");
+                    String time=jsonObject.getString("time");
+                    if(i==jsonArray.length()-1){
+                        String firstPart=time.substring(0,10);
+                        String secondPart=time.substring(11,19);
+                        String finalDate=firstPart+" "+secondPart;
+                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+                        Date date = format.parse(finalDate);
+                        Calendar calendar = Calendar.getInstance();
+                        long difference=calendar.getTime().getTime()-(date.getTime()+7200000);
+                        if(difference<=600000)
+                            flag=true;
+                        else
+                            flag=false;
+
+
+                    }
 
                 }
 
