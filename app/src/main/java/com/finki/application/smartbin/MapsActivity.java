@@ -10,6 +10,7 @@ import android.location.Location;
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.AvoidType;
+import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
@@ -112,10 +113,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        mMap.clear();
-                        DownloadTask task = new DownloadTask();
-                        task.execute("https://jonadimovska.000webhostapp.com/containers.php");
-                        dialog.dismiss();
+
+                            mMap.clear();
+                            DownloadTask task = new DownloadTask();
+                            task.execute("https://jonadimovska.000webhostapp.com/containers.php");
+                            dialog.dismiss();
+
+
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
@@ -145,12 +149,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public boolean onMarkerClick(final Marker marker) {
                         LatLng curr = mCurrLocationMarker.getPosition();
-                        Toast.makeText(getApplicationContext(), curr.toString(), Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), curr.toString(), Toast.LENGTH_LONG).show();
                         GoogleDirection.withServerKey("AIzaSyCM6qOQa5TTYcPyfocEIceJLjsVXMP-AGI")
                                 .from(curr)
                                 .to(marker.getPosition())
-                                .avoid(AvoidType.FERRIES)
-                                .avoid(AvoidType.HIGHWAYS)
+                                .transportMode(TransportMode.WALKING)
                                 .execute(new DirectionCallback() {
                                     @Override
                                     public void onDirectionSuccess(final Direction direction, String rawBody) {
@@ -171,7 +174,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                             }
                                                             dialog.cancel();
                                                         }
-                                                    });
+                                                    }).setNegativeButton(android.R.string.no,new DialogInterface.OnClickListener(){
+
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    dialogInterface.cancel();
+                                                }
+                                            });
 
                                             AlertDialog dialog = builder.create();
                                             dialog.show();
@@ -179,7 +188,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                         } else {
                                             // Do something
-                                            Toast.makeText(getApplicationContext(), "no", Toast.LENGTH_LONG).show();
+                                            //Toast.makeText(getApplicationContext(), "no", Toast.LENGTH_LONG).show();
                                         }
                                     }
 
@@ -248,6 +257,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Double maxCapacityDouble = Double.parseDouble(maxCapacity);
                     Integer categoryInt = Integer.parseInt(category);
 
+                    if (capacityDouble < 0) {
+                        capacityDouble += 256.00;
+                    }
                     if (selectedItems.contains(categoryInt) || selectedItems.isEmpty()) {
                         Container container = new Container(Integer.parseInt(id), longitudeDouble, latitudeDouble, capacityDouble, maxCapacityDouble, Integer.parseInt(id_ttn), categoryInt);
                         containerList.add(container);

@@ -36,12 +36,13 @@
 
             android:layout_weight="9"
             />
-        <ImageView
+        <ImageButton
 
             android:background="@drawable/ic_call_black_24dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:onClick="callImageClick"/>
 
         <ImageView
 
@@ -82,6 +83,7 @@
         android:background="@drawable/edittext_bottom_line"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="16dp"
+        android:text="www.pakomak.com.mk"
         android:textColor="@color/dark_gray"
 
         />
@@ -94,6 +96,7 @@
         android:background="@drawable/edittext_bottom_line"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="16dp"
+        android:text="www.pakomak.com.mk"
         android:textColor="@color/dark_gray"
 
         />

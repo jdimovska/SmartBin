@@ -3,6 +3,7 @@ package com.finki.application.smartbin;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -12,9 +13,11 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v4.app.FragmentActivity;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.finki.application.smartbin.models.Firm;
 
 import org.w3c.dom.Text;
@@ -29,6 +32,7 @@ public class CustomFirmsAdapter extends ArrayAdapter<Firm> {
     TextView tvName;
     TextView tvUrl;
     Firm firm;
+    ImageView image;
     Context context;
 
     public CustomFirmsAdapter(Context context, ArrayList<Firm> firms) {
@@ -52,6 +56,22 @@ public class CustomFirmsAdapter extends ArrayAdapter<Firm> {
 
         });
 
+        image = (ImageView) convertView.findViewById(R.id.image);
+
+
+        String initials= tvName.getText().toString();
+        String letters = "";
+        if (!  initials.isEmpty()) {
+            letters = initials.charAt(0)+"";
+        } else {
+            letters = "?";
+        }
+
+        //TextDrawable drawable = TextDrawable.builder().buildRound(letters,Color.parseColor("#696969"));
+
+        TextDrawable drawable = TextDrawable.builder().buildRound(letters, Color.rgb		(255, 140, 0));
+        //TextDrawable drawable = TextDrawable.builder().buildRound(letters,Color.rgb(38,174,144));
+        image.setImageDrawable(drawable);
 
         return convertView;
     }

@@ -2,9 +2,11 @@ package com.finki.application.smartbin;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -58,6 +60,7 @@ public class FirmDetailsFragment extends Fragment {
         return view;
 
     }
+
 
     public void loadUrl() {
         WebViewFragment webViewFragment = new WebViewFragment();
