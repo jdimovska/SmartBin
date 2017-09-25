@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.graphics.Color;
 import android.media.Image;
 import android.os.AsyncTask;
@@ -37,6 +38,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.finki.application.smartbin.helper.AppDatabaseHelper;
+import com.finki.application.smartbin.helper.FirmsDatabaseHelper;
+import com.finki.application.smartbin.helper.UsersDatabaseHelper;
 import com.finki.application.smartbin.models.Firm;
 import com.finki.application.smartbin.models.User;
 import com.finki.application.smartbin.rest_services.AppConfig;
@@ -67,6 +71,8 @@ public class MainActivity extends AppCompatActivity
     Fragment fragment = null;
     ArrayList<User> usersList;
     CustomUsersAdapter adapter;
+    AppDatabaseHelper helper;
+    SQLiteDatabase dbDelete;
 
     ListView viewListUsers;
     @Override
@@ -79,6 +85,10 @@ public class MainActivity extends AppCompatActivity
         viewListUsers=(ListView) findViewById (R.id.userAdapterList);
         viewListUsers.setAdapter(adapter);
 
+        helper=new AppDatabaseHelper(getApplicationContext());
+        dbDelete=helper.getWritableDatabase();
+
+        updateListView();
         DownloadTask task=new DownloadTask();
         task.execute("https://jonadimovska.000webhostapp.com/best.php");
 
@@ -134,9 +144,7 @@ public class MainActivity extends AppCompatActivity
                     StringBuilder sb = new StringBuilder();
                     sb.append("\n"+"Name: "+session.getFullname()+"\n"+"\n");
                     sb.append("Points: "+obj.getString("points")+"\n"+"\n");
-                    sb.append("Location: "+obj.getString("address")+"\n"+"\n");
-
-
+                    sb.append("Container ID: "+obj.getString("id_ttn")+"\n"+"\n");
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage(sb)
@@ -284,19 +292,31 @@ public class MainActivity extends AppCompatActivity
                     result+=current;
                     data=reader.read();
                 }
-
-
-
+                dbDelete.execSQL("DELETE from users");
+                usersList.clear();
                 JSONArray jsonArray=new JSONArray(result);
+
                 for(int i=0;i<jsonArray.length();i++){
                     JSONObject jsonObject=jsonArray.getJSONObject(i);
 
                     String name = jsonObject.getString("name");
+                    String email=jsonObject.getString("email");
                     String username = jsonObject.getString("username");
                     String points = jsonObject.getString("points");
-
-                    User user=new User(name,username,Double.parseDouble(points));
+                    User user=new User(name,email,username,Double.parseDouble(points));
                     usersList.add(user);
+
+                    String sql="INSERT INTO users(name,email,points,username) VALUES(?,?,?,?)";
+                    SQLiteStatement statement=dbDelete.compileStatement(sql);
+
+                    statement.bindString(1,name);
+                    statement.bindString(2,email);
+                    statement.bindString(3,points);
+                    statement.bindString(4,username);
+
+                    statement.execute();
+
+
                 }
 
 
@@ -312,5 +332,28 @@ public class MainActivity extends AppCompatActivity
             adapter.notifyDataSetChanged();
         }
     }
+    public void updateListView(){
+        String query = "SELECT  * FROM users";
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        User user = null;
+        if (cursor.moveToFirst()) {
+            do {
+
+                String id = cursor.getString(0);
+                String name = cursor.getString(1);
+                String email = cursor.getString(2);
+                String points = cursor.getString(3);
+                Double doublePoints=Double.parseDouble(points);
+                String username = cursor.getString(4);
+
+                user=new User(name,email,username,doublePoints);
+                usersList.add(user);
+            } while (cursor.moveToNext());
+
+            adapter.notifyDataSetChanged();
+        }
+    }
+
 
 }

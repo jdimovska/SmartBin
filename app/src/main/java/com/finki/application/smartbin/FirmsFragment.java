@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.finki.application.smartbin.helper.AppDatabaseHelper;
 import com.finki.application.smartbin.helper.FirmsDatabaseHelper;
 import com.finki.application.smartbin.models.Firm;
 import com.finki.application.smartbin.models.User;
@@ -35,7 +36,7 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
     FragmentActivity context;
     ArrayList<Firm> firmsList;
     CustomFirmsAdapter adapter;
-    FirmsDatabaseHelper helper;
+    AppDatabaseHelper helper;
 
     public void onActivityCreated(Bundle bundle)
     {
@@ -45,24 +46,20 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         view=inflater.inflate(R.layout.fragment_firms, container, false);
-
         firmsList=new ArrayList<>();
-        helper=new FirmsDatabaseHelper(getActivity().getApplicationContext());
+        helper=new AppDatabaseHelper(getActivity().getApplicationContext());
 
         adapter=new CustomFirmsAdapter(getActivity(),firmsList);
         ListView viewList=(ListView)view.findViewById (R.id.list);
         viewList.setAdapter(adapter);
         updateListView();
-
         DownloadTask task=new DownloadTask();
         task.execute("https://jonadimovska.000webhostapp.com/firms.php");
         viewList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView <? > arg0, View arg1, int arg2,
                                     long arg3) {
-
                 Bundle args=new Bundle();
-
                 args.putString("name",firmsList.get(arg2).name);
                 args.putString("location",firmsList.get(arg2).location);
                 args.putString("url",firmsList.get(arg2).url);
@@ -122,8 +119,8 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
                     data=reader.read();
                 }
 
-                SQLiteDatabase db = helper.getWritableDatabase();
-                db.execSQL("Delete from firms");
+                SQLiteDatabase dbDelete = helper.getWritableDatabase();
+                dbDelete.execSQL("Delete from firms");
 
                 JSONArray jsonArray=new JSONArray(result);
                 for(int i=0;i<jsonArray.length();i++){
@@ -136,11 +133,11 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
                     String urlFirm = jsonObject.getString("url");
                     Firm firm=new Firm(name,email,location,phone,urlFirm);
                     firmsList.add(firm);
-                    SQLiteDatabase dbInsert = helper.getWritableDatabase();
+
 
                     // 2. create ContentValues to add key "column"/value
                     String sql="INSERT INTO firms(name,email,location,phone,url) VALUES(?,?,?,?,?)";
-                    SQLiteStatement statement=db.compileStatement(sql);
+                    SQLiteStatement statement=dbDelete.compileStatement(sql);
 
                     statement.bindString(1,name);
                     statement.bindString(2,email);
@@ -166,15 +163,11 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
     public void updateListView(){
         String query = "SELECT  * FROM firms";
         SQLiteDatabase db = helper.getWritableDatabase();
-
-
         Cursor cursor = db.rawQuery(query, null);
-
-        // 3. go over each row, build book and add it to list
         Firm firm = null;
         if (cursor.moveToFirst()) {
             do {
-                System.out.println(cursor.getString(1));
+
                 String id = cursor.getString(0);
                 String name = cursor.getString(1);
                 String email = cursor.getString(2);
@@ -184,14 +177,8 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
                 firm=new Firm(name,email,location,phone,urlFirm);
                 firmsList.add(firm);
             } while (cursor.moveToNext());
+
             adapter.notifyDataSetChanged();
         }
-
-
-
-
-
     }
-
-
 }

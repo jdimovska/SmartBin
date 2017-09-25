@@ -141,15 +141,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
                 mMap.setMyLocationEnabled(true);
-//                DownloadTask task = new DownloadTask();
-//                task.execute("https://jonadimovska.000webhostapp.com/containers.php");
 
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
                     @Override
                     public boolean onMarkerClick(final Marker marker) {
                         LatLng curr = mCurrLocationMarker.getPosition();
-                        //Toast.makeText(getApplicationContext(), curr.toString(), Toast.LENGTH_LONG).show();
+
                         GoogleDirection.withServerKey("AIzaSyCM6qOQa5TTYcPyfocEIceJLjsVXMP-AGI")
                                 .from(curr)
                                 .to(marker.getPosition())
@@ -206,12 +204,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
-
     }
-
-
-
-
     public class DownloadTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -287,8 +280,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 } else {
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 }
-
-
                 mMap.addMarker(markerOptions);
             }
 
