@@ -3,15 +3,16 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_gray"
-    android:weightSum="1">
+    android:weightSum="1.5">
 
     <ImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="233dp"
         android:background="@color/light_gray"
-        android:src="@drawable/header"
-        android:layout_weight="0.3" />
+        android:src="@drawable/headeri_firm"
+        android:layout_marginBottom="15dp"
+        />
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
