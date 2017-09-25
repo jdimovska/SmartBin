@@ -129,9 +129,11 @@ public class MainActivity extends AppCompatActivity
                 try {
                     JSONObject obj = new JSONObject(result.getContents());
                     StringBuilder sb = new StringBuilder();
-                    sb.append("\n"+"Name: "+obj.getString("name")+"\n"+"\n");
+                    sb.append("\n"+"Name: "+session.getFullname()+"\n"+"\n");
                     sb.append("Points: "+obj.getString("points")+"\n"+"\n");
                     sb.append("Location: "+obj.getString("address")+"\n"+"\n");
+
+
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage(sb)
@@ -145,7 +147,9 @@ public class MainActivity extends AppCompatActivity
                                         @Override
                                         public void onResponse(String response) {
                                             Toast.makeText(getApplicationContext(),"Successfully updated!",Toast.LENGTH_SHORT).show();
-
+                                            usersList.clear();
+                                            DownloadTask updateTask=new DownloadTask();
+                                            updateTask.execute("https://jonadimovska.000webhostapp.com/best.php");
                                         }
                                     }, new Response.ErrorListener() {
                                         @Override
@@ -162,7 +166,7 @@ public class MainActivity extends AppCompatActivity
                                             Double doublePoints=Double.parseDouble(points);
                                             doublePoints+=100;
                                             params.put("points",doublePoints+"");
-
+                                            session.setPoints(doublePoints+"");
                                             return params;
                                         }
 

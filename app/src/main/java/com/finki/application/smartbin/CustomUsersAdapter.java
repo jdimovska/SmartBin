@@ -55,7 +55,10 @@ public class CustomUsersAdapter extends ArrayAdapter<User> {
             letters = initials[0].charAt(0)+""+initials[1].charAt(0);
         }
 
-        TextDrawable drawable = TextDrawable.builder().buildRound(letters,Color.rgb(38,174,144));
+        //TextDrawable drawable = TextDrawable.builder().buildRound(letters,Color.parseColor("#696969"));
+
+        TextDrawable drawable = TextDrawable.builder().buildRound(letters,Color.rgb		(255, 140, 0));
+        //TextDrawable drawable = TextDrawable.builder().buildRound(letters,Color.rgb(38,174,144));
         image.setImageDrawable(drawable);
 
     }

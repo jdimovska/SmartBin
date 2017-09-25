@@ -317,6 +317,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         @Override
         protected void onPostExecute(String result) {
+
             showOptionsDialogBox();
         }
 

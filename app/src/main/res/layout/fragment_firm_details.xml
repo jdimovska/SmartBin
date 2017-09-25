@@ -4,18 +4,62 @@
     android:layout_height="match_parent"
     android:background="@color/light_gray"
     android:weightSum="1">
-
-    <TextView
-        android:id="@+id/tvName"
+    <ImageView
+        android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="25dp"
-        android:textColor="@color/btn_login"
-        android:textStyle="bold"
-        />
+        android:paddingTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/light_gray"
+        android:src="@drawable/recycle_logo"
+        android:layout_weight="1.5" />
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+
+
+        android:weightSum="12"
+        android:background="@drawable/edittext_bottom_line"
+        android:paddingBottom="15sp">
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="25dp"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold"
+
+            android:layout_weight="9"
+            />
+        <ImageView
+
+            android:background="@drawable/ic_call_black_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <ImageView
+
+            android:background="@drawable/ic_cast_black_24dp"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15sp"/>
+        <ImageView
+
+            android:background="@drawable/ic_mail_outline_black_24dp"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="15sp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/tvUrl"
         android:layout_width="match_parent"
@@ -23,29 +67,35 @@
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="16dp"
-        android:textColor="@color/btn_login"
-        android:textStyle="bold"
+        android:paddingBottom="10sp"
+        android:textColor="@color/dark_gray"
+
         android:text="www.pakomak.com.mk"
-        />
+        android:background="@drawable/edittext_bottom_line"
+                />
     <TextView
         android:id="@+id/tvLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
+        android:paddingBottom="10sp"
+        android:background="@drawable/edittext_bottom_line"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="16dp"
-        android:textColor="@color/btn_login"
-        android:textStyle="bold"
+        android:textColor="@color/dark_gray"
+
         />
     <TextView
         android:id="@+id/tvPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
+        android:paddingBottom="10sp"
+        android:background="@drawable/edittext_bottom_line"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="16dp"
-        android:textColor="@color/btn_login"
-        android:textStyle="bold"
+        android:textColor="@color/dark_gray"
+
         />
     <TextView
         android:id="@+id/tvEmail"
@@ -55,17 +105,13 @@
         android:text="@string/home_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="16dp"
-        android:textColor="@color/btn_login"
-        android:textStyle="bold"
+        android:textColor="@color/dark_gray"
+
+        android:paddingBottom="10sp"
+        android:background="@drawable/edittext_bottom_line"
         />
 
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="30dp"
-        android:src="@drawable/recycle_logo"
-        android:layout_weight="1.5" />
+
 
 
 </LinearLayout>
