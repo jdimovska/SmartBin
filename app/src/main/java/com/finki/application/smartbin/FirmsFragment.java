@@ -2,6 +2,10 @@ package com.finki.application.smartbin;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -12,7 +16,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.finki.application.smartbin.helper.FirmsDatabaseHelper;
 import com.finki.application.smartbin.models.Firm;
+import com.finki.application.smartbin.models.User;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,6 +35,7 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
     FragmentActivity context;
     ArrayList<Firm> firmsList;
     CustomFirmsAdapter adapter;
+    FirmsDatabaseHelper helper;
 
     public void onActivityCreated(Bundle bundle)
     {
@@ -40,10 +47,12 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
         view=inflater.inflate(R.layout.fragment_firms, container, false);
 
         firmsList=new ArrayList<>();
+        helper=new FirmsDatabaseHelper(getActivity().getApplicationContext());
 
         adapter=new CustomFirmsAdapter(getActivity(),firmsList);
         ListView viewList=(ListView)view.findViewById (R.id.list);
         viewList.setAdapter(adapter);
+        updateListView();
 
         DownloadTask task=new DownloadTask();
         task.execute("https://jonadimovska.000webhostapp.com/firms.php");
@@ -113,7 +122,8 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
                     data=reader.read();
                 }
 
-
+                SQLiteDatabase db = helper.getWritableDatabase();
+                db.execSQL("Delete from firms");
 
                 JSONArray jsonArray=new JSONArray(result);
                 for(int i=0;i<jsonArray.length();i++){
@@ -126,6 +136,19 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
                     String urlFirm = jsonObject.getString("url");
                     Firm firm=new Firm(name,email,location,phone,urlFirm);
                     firmsList.add(firm);
+                    SQLiteDatabase dbInsert = helper.getWritableDatabase();
+
+                    // 2. create ContentValues to add key "column"/value
+                    String sql="INSERT INTO firms(name,email,location,phone,url) VALUES(?,?,?,?,?)";
+                    SQLiteStatement statement=db.compileStatement(sql);
+
+                    statement.bindString(1,name);
+                    statement.bindString(2,email);
+                    statement.bindString(3,location);
+                    statement.bindString(4,phone);
+                    statement.bindString(5,urlFirm);
+                    statement.execute();
+
                 }
 
 
@@ -140,4 +163,35 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
             adapter.notifyDataSetChanged();
         }
     }
+    public void updateListView(){
+        String query = "SELECT  * FROM firms";
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        // 3. go over each row, build book and add it to list
+        Firm firm = null;
+        if (cursor.moveToFirst()) {
+            do {
+                System.out.println(cursor.getString(1));
+                String id = cursor.getString(0);
+                String name = cursor.getString(1);
+                String email = cursor.getString(2);
+                String location = cursor.getString(3);
+                String phone = cursor.getString(4);
+                String urlFirm = cursor.getString(5);
+                firm=new Firm(name,email,location,phone,urlFirm);
+                firmsList.add(firm);
+            } while (cursor.moveToNext());
+            adapter.notifyDataSetChanged();
+        }
+
+
+
+
+
+    }
+
+
 }

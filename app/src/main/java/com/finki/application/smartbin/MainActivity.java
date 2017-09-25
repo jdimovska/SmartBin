@@ -3,6 +3,8 @@ package com.finki.application.smartbin;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.media.Image;
 import android.os.AsyncTask;
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity
     Fragment fragment = null;
     ArrayList<User> usersList;
     CustomUsersAdapter adapter;
+
     ListView viewListUsers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -301,6 +304,7 @@ public class MainActivity extends AppCompatActivity
             }
             return null;
         }
+
 
         @Override
         protected void onPostExecute(String s) {
