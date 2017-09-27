@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         usersList=new ArrayList<>();
         adapter=new CustomUsersAdapter(this,usersList);
-flag=false;
+        flag=false;
         viewListUsers=(ListView) findViewById (R.id.userAdapterList);
         viewListUsers.setAdapter(adapter);
 
@@ -157,6 +157,7 @@ flag=false;
 
 
                     String str_result= new DownloadTaskCapacity().execute("https://jonadimovska.000webhostapp.com/mqtt.php").get();
+
                     if(flag){
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage(sb)
@@ -187,7 +188,7 @@ flag=false;
                                             params.put("email", session.getEmail());
                                             String points=session.getPoints();
                                             Double doublePoints=Double.parseDouble(points);
-                                            doublePoints+=100;
+                                            doublePoints+=30;
                                             params.put("points",doublePoints+"");
                                             session.setPoints(doublePoints+"");
                                             return params;
@@ -198,16 +199,6 @@ flag=false;
                                     AppController.getInstance().addToRequestQueue(strReq);
 
 
-
-
-
-
-
-
-
-
-
-
                                     dialog.cancel();
                                 }
                             });
@@ -216,7 +207,7 @@ flag=false;
                     dialog.show();
                     }
                 else{
-                    Toast.makeText(this,"Please throw garbage in order yo get points!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,"Please recycle to get points!",Toast.LENGTH_LONG).show();
                 }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -270,6 +261,7 @@ flag=false;
         } else if (id == R.id.nav_home) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
+            finish();
 
 
         } else if (id == R.id.nav_log_out) {
@@ -391,8 +383,6 @@ flag=false;
                             flag=true;
                         else
                             flag=false;
-
-
                     }
 
                 }

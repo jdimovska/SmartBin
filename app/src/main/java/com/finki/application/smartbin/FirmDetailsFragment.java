@@ -100,5 +100,6 @@ public class FirmDetailsFragment extends Fragment {
         super.onAttach(activity);
     }
 
+
 }
 

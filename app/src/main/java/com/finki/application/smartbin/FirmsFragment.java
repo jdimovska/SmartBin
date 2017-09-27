@@ -3,6 +3,7 @@ package com.finki.application.smartbin;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -40,7 +41,9 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
 
     public void onActivityCreated(Bundle bundle)
     {
+
         super.onActivityCreated(bundle);
+
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +56,7 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
         ListView viewList=(ListView)view.findViewById (R.id.list);
         viewList.setAdapter(adapter);
         updateListView();
+
         DownloadTask task=new DownloadTask();
         task.execute("https://jonadimovska.000webhostapp.com/firms.php");
         viewList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -71,7 +75,7 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
                 android.app.FragmentManager fragmentManager = getFragmentManager();
                 android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.fragment_firms, secondFragment);
-                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.addToBackStack("back");
                 fragmentTransaction.commit();
             }
 
@@ -165,6 +169,7 @@ public class FirmsFragment extends Fragment implements AdapterView.OnItemClickLi
         SQLiteDatabase db = helper.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         Firm firm = null;
+
         if (cursor.moveToFirst()) {
             do {
 

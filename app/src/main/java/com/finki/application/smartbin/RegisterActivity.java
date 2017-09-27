@@ -165,7 +165,7 @@ public class RegisterActivity extends AppCompatActivity {
                 params.put("email", email);
                 params.put("password", password);
                 params.put("username", username);
-
+                params.put("points","0");
                 return params;
             }
 

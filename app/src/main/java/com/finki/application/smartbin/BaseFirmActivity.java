@@ -18,6 +18,7 @@ public class BaseFirmActivity extends AppCompatActivity {
         setContentView(R.layout.activity_base_firm);
 
         FirmsFragment firstFragment = new FirmsFragment();
+
         android.app.FragmentManager fragmentManager = getFragmentManager();
         android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -32,12 +33,10 @@ public class BaseFirmActivity extends AppCompatActivity {
 
         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(tvPhone.getText().toString()));
 
-            startActivity(intent);
+        startActivity(intent);
 
         //startActivity(intent);
     }
-
-
 
 
 }
